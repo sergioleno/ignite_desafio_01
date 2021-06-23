@@ -16,11 +16,16 @@ function checksExistsUserAccount(request, response, next) {
   const user = users.find((user) => user.username === username);
 
   if (!user) {
-    return response.status(400).json({ error: "User not found!" });
+    return response.status(404).json({ error: "User not found!" });
   }
   request.user = user;
 
   return next();
+}
+
+function findTodo(todoList, id) {
+  const todo = todoList.findIndex((todo) => todo.id === id);
+  return todo;
 }
 
 app.post("/users", (request, response) => {
@@ -39,11 +44,12 @@ app.post("/users", (request, response) => {
     todoList: [],
   });
 
-  return response.status(201).send();
+  return response.status(201).json(users);
 });
 
 app.get("/todos", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user } = request;
+  return response.json(user.todoList);
 });
 
 app.post("/todos", checksExistsUserAccount, (request, response) => {
@@ -59,29 +65,56 @@ app.post("/todos", checksExistsUserAccount, (request, response) => {
   };
   user.todoList.push(newTodo);
 
-  return response.status(201).json(user);
+  return response.status(201).send();
 });
 
 app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { title, deadline } = request.body;
+  const { user } = request;
+  const { id } = request.params;
+
+  const todoIndex = findTodo(user.todoList, id);
+
+  if (todoIndex === -1) {
+    return response.status(404).json({ error: "Todo not found!" });
+  }
+
+  user.todoList[todoIndex].title = title;
+  user.todoList[todoIndex].deadline = new Date(deadline);
+  return response.status(200).send();
 });
 
 app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user } = request;
+  const { id } = request.params;
+
+  const todoIndex = findTodo(user.todoList, id);
+
+  if (todoIndex === -1) {
+    return response.status(404).json({ error: "Todo not found!" });
+  }
+
+  user.todoList[todoIndex].done = true;
+  return response.status(200).send();
 });
 
 app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user } = request;
+  const { id } = request.params;
+
+  const todoIndex = findTodo(user.todoList, id);
+
+  if (todoIndex === -1) {
+    return response.status(404).json({ error: "Todo not found!" });
+  } else {
+    user.todoList.splice(todoIndex, 1);
+    return response.status(200).send();
+  }
+});
+
+app.get("/todos", checksExistsUserAccount, (request, response) => {
+  const { user } = request;
+  return response.status(200).json(user.todoList);
 });
 
 module.exports = app;
-
-/*
-- Criar um novo *todo*;
-- Listar todos os *todos*;
-- Alterar o `title` e `deadline` de um *todo* existente;
-- Marcar um *todo* como feito;
-- Excluir um *todo*;
-
-Tudo isso para cada usuário em específico 
-*/
