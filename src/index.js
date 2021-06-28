@@ -27,7 +27,8 @@ function findTodo(todoList, id) {
   const todo = todoList.findIndex((todo) => todo.id === id);
   return todo;
 }
-
+//rotas de usuário
+//cria usuário
 app.post("/users", (request, response) => {
   const { name, username } = request.body;
 
@@ -47,11 +48,8 @@ app.post("/users", (request, response) => {
   return response.status(201).json(users);
 });
 
-app.get("/todos", checksExistsUserAccount, (request, response) => {
-  const { user } = request;
-  return response.json(user.todoList);
-});
-
+//rotas de todos
+//cria todo
 app.post("/todos", checksExistsUserAccount, (request, response) => {
   const { title, deadline } = request.body;
   const { user } = request;
@@ -68,6 +66,13 @@ app.post("/todos", checksExistsUserAccount, (request, response) => {
   return response.status(201).send();
 });
 
+//lista todos de um usuáro
+app.get("/todos", checksExistsUserAccount, (request, response) => {
+  const { user } = request;
+  return response.json(user.todoList);
+});
+
+//atualiza todo
 app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
   const { title, deadline } = request.body;
   const { user } = request;
@@ -84,6 +89,7 @@ app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
   return response.status(200).send();
 });
 
+//atualiza "done" do todo
 app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
   const { user } = request;
   const { id } = request.params;
@@ -98,6 +104,7 @@ app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
   return response.status(200).send();
 });
 
+//deleta todo
 app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
   const { user } = request;
   const { id } = request.params;
@@ -110,11 +117,6 @@ app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
     user.todoList.splice(todoIndex, 1);
     return response.status(200).send();
   }
-});
-
-app.get("/todos", checksExistsUserAccount, (request, response) => {
-  const { user } = request;
-  return response.status(200).json(user.todoList);
 });
 
 module.exports = app;
