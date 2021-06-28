@@ -86,7 +86,7 @@ app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
 
   user.todoList[todoIndex].title = title;
   user.todoList[todoIndex].deadline = new Date(deadline);
-  return response.status(200).send();
+  return response.status(201).send();
 });
 
 //atualiza "done" do todo
@@ -101,7 +101,7 @@ app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
   }
 
   user.todoList[todoIndex].done = true;
-  return response.status(200).send();
+  return response.status(201).send();
 });
 
 //deleta todo
@@ -115,7 +115,7 @@ app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
     return response.status(404).json({ error: "Todo not found!" });
   } else {
     user.todoList.splice(todoIndex, 1);
-    return response.status(200).send();
+    return response.status(201).send();
   }
 });
 
