@@ -13,7 +13,7 @@ const users = [];
 users.push({
   id: uuidv4(),
   name: "Usuário de Teste",
-  username: "testuser",
+  username: "user",
   todoList: [],
 });
 
