@@ -10,6 +10,13 @@ app.use(express.json());
 
 const users = [];
 
+users.push({
+  id: uuidv4(),
+  name: "Usuário de Teste",
+  username: "testuser",
+  todoList: [],
+});
+
 function checksExistsUserAccount(request, response, next) {
   const { username } = request.headers;
 
